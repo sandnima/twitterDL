@@ -29,7 +29,7 @@ class Twitter extends TwitterOAuth
     }
 
 
-    function shortlink_clean($text): string
+    function shortlink_clean($text): string|null
     {
         if (preg_match_all('/(?<short_url>https:\/\/t.co\/\S+)/', $text, $all_matches)) {
             foreach ($all_matches['short_url'] as $short_url) {

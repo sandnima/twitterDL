@@ -116,12 +116,10 @@ if ($message) {
                                 $res = $telegram->sendMediagroup($chat_id, json_encode($medias));
                             }
                             else {
-                                try {
-                                    $merged_album = array_push($merged_album, $medias);
+                                foreach ($medias as $media) {
+                                    $merged_album[] = $media;
                                 }
-                                catch (TypeError) {
-                                    $merged_album = $medias;
-                                }
+                                unset($medias);
                                 $merged_text = $merged_text.$response_text."\n\n";
                             }
                         }
