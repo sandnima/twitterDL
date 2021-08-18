@@ -1,6 +1,6 @@
 <?php
 
-const TOKEN = '';
+require_once "api_keys.php";
 
 class Telegram
 {

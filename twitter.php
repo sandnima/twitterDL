@@ -1,13 +1,9 @@
 <?php
 
 require "vendor/autoload.php";
+require_once "api_keys.php";
 
 use Abraham\TwitterOAuth\TwitterOAuth;
-
-const CONSUMER_KEY = '';
-const CONSUMER_SECRET = '';
-const ACCESS_TOKEN = '';
-const ACCESS_TOKEN_SECRET = '';
 
 class Twitter extends TwitterOAuth
 {
