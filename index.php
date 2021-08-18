@@ -98,6 +98,7 @@ if ($message) {
 
                         } // If tweet is photos
                         else {
+                            $medias = array();
                             $index_counter = 0;
                             foreach ($tweet->extended_entities->media as $media) {
                                 $media_type = $media->type;
@@ -119,7 +120,6 @@ if ($message) {
                                 foreach ($medias as $media) {
                                     $merged_album[] = $media;
                                 }
-                                unset($medias);
                                 $merged_text = $merged_text.$response_text."\n\n";
                             }
                         }
