@@ -29,7 +29,6 @@ if ($message) {
     $chat_id = $update->message->chat->id;
     // $from_id = $update->message->from->id;
     $text = $update->message->text ?? null;
-    // $text = isset($update->message->text) ? $update->message->text : null;
 
     if ($text) {
         if ($text == '/start') {

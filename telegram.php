@@ -1,15 +1,12 @@
 <?php
 
+const TOKEN = '';
+
 class Telegram
 {
-    protected $token;
+    protected string $token = TOKEN;
 
-    function __construct()
-    {
-        $this->token = '***REMOVED***';
-    }
-
-    function request($method, $datafile)
+    function request($method, $datafile): bool|string
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://api.telegram.org/bot" . $this->token . "/$method");
@@ -28,7 +25,7 @@ class Telegram
     function sendMessage($chat_id, $text, $parse_mode = NULL,
                          $disable_web_page_preview = TRUE, $entities = NULL, $disable_notification = NULL,
                          $reply_to_message_id = NULL, $allow_sending_without_reply = TRUE,
-                         $reply_markup = NULL)
+                         $reply_markup = NULL): bool|string
     {
         $datafile = array(
             "chat_id" => $chat_id,
@@ -44,7 +41,7 @@ class Telegram
     }
 
     function sendDocument($chat_id, $document, $caption = NULL, $parse_mode = NULL,
-                          $disable_notification = NULL, $reply_to_message_id = NULL, $reply_markup = NULL)
+                          $disable_notification = NULL, $reply_to_message_id = NULL, $reply_markup = NULL): bool|string
     {
         $datafile = array(
             "chat_id" => $chat_id,
@@ -60,7 +57,7 @@ class Telegram
 
 
     function sendVideo($chat_id, $video, $caption = NULL, $parse_mode = NULL,
-                       $disable_notification = NULL, $reply_to_message_id = NULL, $reply_markup = NULL)
+                       $disable_notification = NULL, $reply_to_message_id = NULL, $reply_markup = NULL): bool|string
     {
         $datafile = array(
             "chat_id" => $chat_id,
@@ -75,7 +72,7 @@ class Telegram
     }
 
 
-    function sendMediagroup($chat_id, $media, $disable_notification = NULL, $reply_to_message_id = NULL)
+    function sendMediagroup($chat_id, $media, $disable_notification = NULL, $reply_to_message_id = NULL): bool|string
     {
         $datafile = array(
             "chat_id" => $chat_id,

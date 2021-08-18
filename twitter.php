@@ -4,10 +4,10 @@ require "vendor/autoload.php";
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 
-const CONSUMER_KEY = '***REMOVED***';
-const CONSUMER_SECRET = '***REMOVED***';
-const ACCESS_TOKEN = '***REMOVED***';
-const ACCESS_TOKEN_SECRET = '***REMOVED***';
+const CONSUMER_KEY = '';
+const CONSUMER_SECRET = '';
+const ACCESS_TOKEN = '';
+const ACCESS_TOKEN_SECRET = '';
 
 class Twitter extends TwitterOAuth
 {
@@ -17,7 +17,7 @@ class Twitter extends TwitterOAuth
     }
 
 
-    function getTweets($ids)
+    function getTweets($ids): object|array
     {
         return $this->get('statuses/lookup', [
             'id' => $ids,
@@ -27,13 +27,13 @@ class Twitter extends TwitterOAuth
     }
 
 
-    function tweetURL($tweet_author, $tweet_id)
+    function tweetURL($tweet_author, $tweet_id): string
     {
         return "https://twitter.com/$tweet_author/status/$tweet_id";
     }
 
 
-    function shortlink_clean($text)
+    function shortlink_clean($text): string
     {
         if (preg_match_all('/(?<short_url>https:\/\/t.co\/\S+)/', $text, $all_matches)) {
             foreach ($all_matches['short_url'] as $short_url) {
