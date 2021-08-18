@@ -48,6 +48,15 @@ if ($message) {
             //     fclose($temp);
             // }
 
+            if (preg_match('/(\s|\A)\/m\W/', $text)) {
+                $merge_all = True;
+                $merged_text = '';
+                $merged_album = '';
+            }
+            else {
+                $merge_all = False;
+            }
+
             foreach ($tweets as $tweet) {
                 $full_text = $twitter->shortlink_clean($tweet->full_text);
 
@@ -57,7 +66,12 @@ if ($message) {
 
                 // If tweet is only text
                 if (!property_exists($tweet, 'extended_entities')) {
-                    $telegram->sendMessage($chat_id, $response_text, 'HTML');
+                    if (!$merge_all) {
+                        $telegram->sendMessage($chat_id, $response_text, 'HTML');
+                    }
+                    else {
+                        $merged_text = $merged_text.$response_text."\n\n";
+                    }
                 } // If tweet is not just text
                 else {
                     // If tweet includes media
@@ -94,6 +108,15 @@ if ($message) {
                         }
                     }
                 }
+            }
+
+            if ($merge_all) {
+                if ($merged_album == '') {
+                    $telegram->sendMessage($chat_id, $merged_text, 'HTML');
+                }
+//                else {
+//
+//                }
             }
         }
     }
