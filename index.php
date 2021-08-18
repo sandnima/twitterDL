@@ -48,6 +48,15 @@ if ($message) {
             //     fclose($temp);
             // }
 
+            if (preg_match('/(\s|\A)\/m\W/', $text)) {
+                $merge_all = True;
+                $merged_text = '';
+                $merged_album = array();
+            }
+            else {
+                $merge_all = False;
+            }
+
             foreach ($tweets as $tweet) {
                 $full_text = $twitter->shortlink_clean($tweet->full_text);
 
@@ -57,7 +66,12 @@ if ($message) {
 
                 // If tweet is only text
                 if (!property_exists($tweet, 'extended_entities')) {
-                    $telegram->sendMessage($chat_id, $response_text, 'HTML');
+                    if (!$merge_all) {
+                        $telegram->sendMessage($chat_id, $response_text, 'HTML');
+                    }
+                    else {
+                        $merged_text = $merged_text.$response_text."\n\n";
+                    }
                 } // If tweet is not just text
                 else {
                     // If tweet includes media
@@ -68,7 +82,15 @@ if ($message) {
                             $variants = sizeof($media->video_info->variants);
                             for ($index_counter = 0; $index_counter < $variants; $index_counter++) {
                                 $media_url = $media->video_info->variants[$index_counter]->url;
-                                $res = $telegram->sendVideo($chat_id, $media_url, $response_text, 'HTML');
+
+                                if (!$merge_all) {
+                                    $res = $telegram->sendVideo($chat_id, $media_url, $response_text, 'HTML');
+                                }
+                                else {
+                                    // Will be modified soon
+                                    $res = $telegram->sendVideo($chat_id, $media_url, $response_text, 'HTML');
+                                }
+
                                 if (json_decode($res)->ok) {
                                     break;
                                 }
@@ -90,9 +112,33 @@ if ($message) {
                                 }
                                 $index_counter = $index_counter + 1;
                             }
-                            $res = $telegram->sendMediagroup($chat_id, json_encode($medias));
+                            if (!$merge_all) {
+                                $res = $telegram->sendMediagroup($chat_id, json_encode($medias));
+                            }
+                            else {
+                                try {
+                                    $merged_album = array_push($merged_album, $medias);
+                                }
+                                catch (TypeError) {
+                                    $merged_album = $medias;
+                                }
+                                $merged_text = $merged_text.$response_text."\n\n";
+                            }
                         }
                     }
+                }
+            }
+
+            if ($merge_all) {
+                if (sizeof($merged_album) < 1) {
+                    $telegram->sendMessage($chat_id, $merged_text, 'HTML');
+                }
+                else {
+                    foreach ($merged_album as &$media) {
+                        $media['caption'] = '';
+                    }
+                    $merged_album[0]['caption'] = $merged_text;
+                    $res = $telegram->sendMediagroup($chat_id, json_encode($merged_album));
                 }
             }
         }
