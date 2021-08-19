@@ -12,13 +12,13 @@ $update_raw = file_get_contents('php://input');
 $update = json_decode($update_raw);
 
 // ============= Saving logs to Allmessage.json ==============={
-// if(!file_exists('data'))
-// {mkdir('data');}
-
-// $logs=file_get_contents('php://input');
-// $storge=fopen('data/AllMessages.json','a');
-// fwrite($storge,$logs."\n");
-// fclose($storge);
+//if(!file_exists('data'))
+//{mkdir('data');}
+//
+//$logs=file_get_contents('php://input');
+//$storge=fopen('data/AllMessages.json','a');
+//fwrite($storge,$logs."\n");
+//fclose($storge);
 // ============= Saving logs to Allmessage.json ===============}
 
 
@@ -27,6 +27,7 @@ $message = $update->message ?? null;
 if ($message) {
     $message_id = $update->message->message_id;
     $chat_id = $update->message->chat->id;
+    $chat_type = $update->message->chat->type;
     // $from_id = $update->message->from->id;
     $text = $update->message->text ?? null;
 
@@ -67,7 +68,7 @@ if ($message) {
                 // If tweet is only text
                 if (!property_exists($tweet, 'extended_entities')) {
                     if (!$merge_all) {
-                        $telegram->sendMessage($chat_id, $response_text, 'HTML');
+                        $res = $telegram->sendMessage($chat_id, $response_text, 'HTML');
                     }
                     else {
                         $merged_text = $merged_text.$response_text."\n\n";
@@ -128,7 +129,7 @@ if ($message) {
             }
 
             if ($merge_all) {
-                if (sizeof($merged_album) < 1) {
+                if (count($merged_album) < 1) {
                     $telegram->sendMessage($chat_id, $merged_text, 'HTML');
                 }
                 else {
@@ -139,6 +140,10 @@ if ($message) {
                     $res = $telegram->sendMediagroup($chat_id, json_encode($merged_album));
                 }
             }
+        }
+
+        if ($chat_type == 'supergroup') {
+            $telegram->deleteMessage($chat_id, $message_id);
         }
     }
 }
