@@ -28,6 +28,7 @@ if ($message) {
     $message_id = $update->message->message_id;
     $chat_id = $update->message->chat->id;
     $chat_type = $update->message->chat->type;
+    $reply_to_message_id = $update->message->reply_to_message->message_id ?? null;
     // $from_id = $update->message->from->id;
     $text = $update->message->text ?? null;
 
@@ -68,7 +69,7 @@ if ($message) {
                 // If tweet is only text
                 if (!property_exists($tweet, 'extended_entities')) {
                     if (!$merge_all) {
-                        $res = $telegram->sendMessage($chat_id, $response_text, 'HTML');
+                        $res = $telegram->sendMessage($chat_id, $response_text, 'HTML', reply_to_message_id: $reply_to_message_id);
                     }
                     else {
                         $merged_text = $merged_text.$response_text."\n\n";
@@ -85,11 +86,11 @@ if ($message) {
                                 $media_url = $media->video_info->variants[$index_counter]->url;
 
                                 if (!$merge_all) {
-                                    $res = $telegram->sendVideo($chat_id, $media_url, $response_text, 'HTML');
+                                    $res = $telegram->sendVideo($chat_id, $media_url, $response_text, 'HTML', reply_to_message_id: $reply_to_message_id);
                                 }
                                 else {
                                     // Will be modified soon
-                                    $res = $telegram->sendVideo($chat_id, $media_url, $response_text, 'HTML');
+                                    $res = $telegram->sendVideo($chat_id, $media_url, $response_text, 'HTML', reply_to_message_id: $reply_to_message_id);
                                 }
 
                                 if (json_decode($res)->ok) {
@@ -115,7 +116,7 @@ if ($message) {
                                 $index_counter = $index_counter + 1;
                             }
                             if (!$merge_all) {
-                                $res = $telegram->sendMediagroup($chat_id, json_encode($medias));
+                                $res = $telegram->sendMediagroup($chat_id, json_encode($medias), reply_to_message_id: $reply_to_message_id);
                             }
                             else {
                                 foreach ($medias as $media) {
@@ -130,14 +131,14 @@ if ($message) {
 
             if ($merge_all) {
                 if (count($merged_album) < 1) {
-                    $telegram->sendMessage($chat_id, $merged_text, 'HTML');
+                    $telegram->sendMessage($chat_id, $merged_text, 'HTML', reply_to_message_id: $reply_to_message_id);
                 }
                 else {
                     foreach ($merged_album as &$media) {
                         $media['caption'] = '';
                     }
                     $merged_album[0]['caption'] = $merged_text;
-                    $res = $telegram->sendMediagroup($chat_id, json_encode($merged_album));
+                    $res = $telegram->sendMediagroup($chat_id, json_encode($merged_album), reply_to_message_id: $reply_to_message_id);
                 }
             }
 
