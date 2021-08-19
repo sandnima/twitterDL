@@ -55,7 +55,6 @@ class Telegram
         return $this->request(__FUNCTION__, $datafile);
     }
 
-
     function sendVideo($chat_id, $video, $caption = NULL, $parse_mode = NULL,
                        $disable_notification = NULL, $reply_to_message_id = NULL, $reply_markup = NULL): bool|string
     {
@@ -71,7 +70,6 @@ class Telegram
         return $this->request(__FUNCTION__, $datafile);
     }
 
-
     function sendMediagroup($chat_id, $media, $disable_notification = NULL, $reply_to_message_id = NULL): bool|string
     {
         $datafile = array(
@@ -79,6 +77,15 @@ class Telegram
             "media" => $media,
             "disable_notification" => $disable_notification,
             "reply_to_message_id" => $reply_to_message_id,
+        );
+        return $this->request(__FUNCTION__, $datafile);
+    }
+
+    function deleteMessage($chat_id, $message_id): bool|string
+    {
+        $datafile = array(
+            "chat_id" => $chat_id,
+            "message_id" => $message_id,
         );
         return $this->request(__FUNCTION__, $datafile);
     }
