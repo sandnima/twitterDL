@@ -14,7 +14,7 @@ $update = json_decode($update_raw);
 // ============= Saving logs to Allmessage.json ==============={
 // if(!file_exists('data'))
 // {mkdir('data');}
-
+//
 // $logs=file_get_contents('php://input');
 // $storge=fopen('data/AllMessages.json','a');
 // fwrite($storge,$logs."\n");
@@ -28,6 +28,7 @@ if ($message) {
     $message_id = $update->message->message_id;
     $chat_id = $update->message->chat->id;
     $chat_type = $update->message->chat->type;
+    $reply_to_message_id = $update->message->reply_to_message->message_id ?? null;
     // $from_id = $update->message->from->id;
     $text = $update->message->text ?? null;
 
@@ -68,7 +69,7 @@ if ($message) {
                 // If tweet is only text
                 if (!property_exists($tweet, 'extended_entities')) {
                     if (!$merge_all) {
-                        $res = $telegram->sendMessage($chat_id, $response_text, 'HTML');
+                        $res = $telegram->sendMessage($chat_id, $response_text, 'HTML', reply_to_message_id: $reply_to_message_id);
                     }
                     else {
                         $merged_text = $merged_text.$response_text."\n\n";
