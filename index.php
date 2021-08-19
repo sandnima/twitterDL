@@ -146,4 +146,8 @@ if ($message) {
             $telegram->deleteMessage($chat_id, $message_id);
         }
     }
+
+    if ($chat_type == 'supergroup') {
+        $telegram->deleteMessage($chat_id, $message_id);
+    }
 }
